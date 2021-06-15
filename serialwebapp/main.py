@@ -1,6 +1,6 @@
 #Config
 import serial
-from flask import Flask
+from flask import *
 app = Flask(__name__)
 bitRate = 9600
 
@@ -26,15 +26,28 @@ def openport():
 #Web App
 @app.route('/')
 def status():
-    return str(openport())
+    if openport() ==1:
+        message = str(ser.name) + 'で接続しています。'
+    else:
+        message = '接続されていません'
+    return render_template("main.html", msg=message)
 
 @app.route('/open')
 def dopen():
-    return 'opend'
+    if openport()==1:
+        ser.write(1)
+    return '放出コマンドを送信しました'
 
 @app.route('/lock')
 def dlock():
-    return 'locked'
+    if openport()==1:
+        ser.write(0)
+    return 'ロックコマンドを送信しました'
+
+@app.route('/quit')
+def quit():
+    if openport()==1:
+        ser.close()
 
 if __name__ == '__main__':
     app.run()
