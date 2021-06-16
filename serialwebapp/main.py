@@ -13,7 +13,6 @@ def openport():
     global ser
     if ser.is_open:
         ret =1
-        pass
     else:
         for i in portlist:
             try:
