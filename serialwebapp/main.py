@@ -36,18 +36,26 @@ def status():
 def dopen():
     if openport()==1:
         ser.write(1)
-    return '放出コマンドを送信しました'
+        message = '放出コマンドが送信されました'
+    else:
+        message = '放出コマンドエラー：送信端末が接続されていません'
+    return render_template("main.html", msg=message)
 
 @app.route('/lock')
 def dlock():
     if openport()==1:
         ser.write(0)
-    return 'ロックコマンドを送信しました'
+        message = 'ロックコマンドが送信されました'
+    else:
+        message = 'ロックコマンドエラー：送信端末が接続されていません'
+    return render_template("main.html", msg=message)
 
 @app.route('/quit')
 def quit():
     if openport()==1:
         ser.close()
+    message = 'シリアル通信が切断されました。'
+    return  render_template("main.html", msg=message)
 
 if __name__ == '__main__':
     app.run()
