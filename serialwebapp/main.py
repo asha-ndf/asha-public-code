@@ -1,6 +1,11 @@
+##テスト版です
+##高度データの送信の代わりに、時刻データのマイクロ秒を送信しています
+##
 #Config
+import datetime
 import serial
 from flask import *
+
 app = Flask(__name__)
 bitRate = 9600
 
@@ -55,6 +60,12 @@ def quit():
         ser.close()
     message = 'シリアル通信が切断されました。'
     return  render_template("main.html", msg=message)
+
+@app.route('/hight') #ajax用のjson送信
+def jsonhight():
+    dt_now = datetime.datetime.now()
+    hight = dt_now.microsecond
+    return jsonify({'result': hight})
 
 if __name__ == '__main__':
     app.run()
