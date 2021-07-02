@@ -1,7 +1,6 @@
-##テスト版です
-##高度データの送信の代わりに、時刻データのマイクロ秒を送信しています
+##実用版です
 ##
-#Config
+#Config====================================
 import datetime
 import serial
 from flask import *
@@ -9,7 +8,7 @@ from flask import *
 app = Flask(__name__)
 bitRate = 9600
 
-#Serial
+#Serial====================================
 ser = serial.Serial()
 portlist = []
 for i in range(10):
@@ -27,7 +26,8 @@ def openport():
             except:
                 ret = 0
     return ret
-#Web App
+
+#Web App====================================
 @app.route('/')
 def status():
     if openport() ==1:
@@ -39,7 +39,7 @@ def status():
 @app.route('/open')
 def dopen():
     if openport()==1:
-        ser.write(1)
+        ser.write('a'.encode('utf-8'))
         message = '放出コマンドが送信されました'
     else:
         message = '放出コマンドエラー：送信端末が接続されていません'
@@ -48,7 +48,7 @@ def dopen():
 @app.route('/lock')
 def dlock():
     if openport()==1:
-        ser.write(0)
+        ser.write('b'.encode('utf-8'))
         message = 'ロックコマンドが送信されました'
     else:
         message = 'ロックコマンドエラー：送信端末が接続されていません'
@@ -63,9 +63,10 @@ def quit():
 
 @app.route('/hight') #ajax用のjson送信
 def jsonhight():
-    dt_now = datetime.datetime.now()
-    hight = dt_now.microsecond
+    #現在のサーボモーターの状態を表示する
+    hight = ser.readline().decode('utf-8')
     return jsonify({'result': hight})
 
+#run====================================
 if __name__ == '__main__':
-    app.run()
+    app.run(host='localhost', port=5000, threaded=False)
